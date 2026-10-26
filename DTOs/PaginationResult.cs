@@ -1,6 +1,6 @@
-﻿namespace Bookstore.Business.DTOs;
+﻿namespace Bookstore_API.DTOs;
 
-internal class PaginationResult<T>
+public class PaginationResult<T>
 {
     public IReadOnlyList<T> Items { get; set; } = [];
     public int Page { get; set; }
