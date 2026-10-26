@@ -1,5 +1,4 @@
 ﻿namespace Bookstore_API.Database.Entities;
-
 public class Author
 {
     public int AuthorId { get; set; }
