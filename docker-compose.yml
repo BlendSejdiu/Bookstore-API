@@ -1,0 +1,14 @@
+services:
+  bookstore-api:
+    image: ${DOCKER_REGISTRY-}bookstoreapi
+    build:
+      context: Bookstore-API
+      dockerfile: Dockerfile
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+volumes:
+  sqlserver-data:

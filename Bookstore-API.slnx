@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="Bookstore-API.csproj" />
+  <Project Path="Bookstore-API/Bookstore-API.csproj" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>
