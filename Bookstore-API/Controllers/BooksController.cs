@@ -10,9 +10,9 @@ namespace Bookstore_API.Controllers;
 public class BooksController(IBookService bookService) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(PaginationResult<BookDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginationResult<BookRequestDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<PaginationResult<BookDTO>>> SearchBooks([FromQuery] string? title, [FromQuery] string? author, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<PaginationResult<BookRequestDTO>>> SearchBooks([FromQuery] string? title, [FromQuery] string? author, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
     {
         if (page < 1)
             return BadRequest(new { message = "Page must be at least 1." });
@@ -28,9 +28,9 @@ public class BooksController(IBookService bookService) : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(BookDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BookRequestDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<BookDTO>> GetBook(int id, CancellationToken cancellationToken)
+    public async Task<ActionResult<BookRequestDTO>> GetBook(int id, CancellationToken cancellationToken)
     {
         var book = await bookService.GetByIdAsync(id, cancellationToken);
 
@@ -41,9 +41,9 @@ public class BooksController(IBookService bookService) : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(BookDTO), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(BookRequestDTO), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BookDTO>> CreateBook([FromBody] BookDTO request, CancellationToken cancellationToken)
+    public async Task<ActionResult<BookRequestDTO>> CreateBook([FromBody] BookRequestDTO request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Title))
             return BadRequest(new { message = "Title is required." });
@@ -60,10 +60,10 @@ public class BooksController(IBookService bookService) : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    [ProducesResponseType(typeof(BookDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BookRequestDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<BookDTO>> UpdateBook(int id, [FromBody] BookDTO request, CancellationToken cancellationToken)
+    public async Task<ActionResult<BookRequestDTO>> UpdateBook(int id, [FromBody] BookRequestDTO request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Title))
             return BadRequest(new { message = "Title is required." });

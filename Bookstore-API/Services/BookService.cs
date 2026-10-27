@@ -69,7 +69,7 @@ public class BookService(ApplicationDbContext _context) : IBookService
     }
         
 
-    public async Task<BookDTO?> CreateAsync(BookDTO request, CancellationToken cancellationToken = default)
+    public async Task<BookDTO?> CreateAsync(BookRequestDTO request, CancellationToken cancellationToken = default)
     {
         if (!await _context.Authors.AnyAsync(a => a.AuthorId == request.Author.AuthorId, cancellationToken))
             return null;
@@ -86,7 +86,7 @@ public class BookService(ApplicationDbContext _context) : IBookService
         return await GetByIdAsync(book.BookId, cancellationToken);
     }
 
-    public async Task<BookDTO?> UpdateAsync(int id, BookDTO request, CancellationToken cancellationToken = default)
+    public async Task<BookDTO?> UpdateAsync(int id, BookRequestDTO request, CancellationToken cancellationToken = default)
     {
         var book = await _context.Books.FirstOrDefaultAsync(b => b.BookId == id, cancellationToken);
 
