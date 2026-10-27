@@ -11,7 +11,9 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")));
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    
+    ));
 
 builder.Services.AddScoped<IBookService, BookService>();
 
@@ -26,6 +28,12 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/openapi/v1.json", "Bookstore API v1");
     });
+
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    await context.Database.MigrateAsync();
+    await DbSeeder.SeedAsync(context);
 }
 
 app.UseHttpsRedirection();
