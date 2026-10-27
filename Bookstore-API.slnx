@@ -1,4 +1,3 @@
 <Solution>
-  <Project Path="../Bookstore.Business/Bookstore.Business.csproj" />
   <Project Path="Bookstore-API.csproj" />
 </Solution>
