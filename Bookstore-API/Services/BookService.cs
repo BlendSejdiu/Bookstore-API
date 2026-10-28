@@ -1,4 +1,4 @@
-﻿using Bookstore_API.Database.Entities;
+using Bookstore_API.Database.Entities;
 using Bookstore_API.Database.Persistence;
 using Bookstore_API.DTOs;
 using Bookstore_API.Services.Interface;

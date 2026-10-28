@@ -12,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var keycloak = builder.Configuration.GetSection("Keycloak");
 var issuer = keycloak["Issuer"] ?? throw new InvalidOperationException("Keycloak:Issuer is required.");
@@ -27,6 +29,8 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddSwaggerConfiguration(issuer);
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
