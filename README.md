@@ -43,17 +43,10 @@ dotnet run --project Bookstore-API --launch-profile https
 
 Use your actual password in the connection string. In development, startup applies database migrations and seeds authors if the authors table is empty. The HTTPS launch profile serves Swagger at [https://localhost:7027/swagger/index.html](https://localhost:7027/swagger/index.html). If startup fails while SQL Server is still starting, wait for readiness and retry.
 
-## 3. Create a search user in Keycloak
 
-The mounted `keycloak/bookstore-realm.json` automatically creates the `bookstore` realm, the `bookstore-api`, `bookstore-web`, and `bookstore-service` clients, the API roles, audience mappers, and the service account's `books-manage` role. The service client secret comes from `BOOKSTORE_SERVICE_CLIENT_SECRET` in `.env`. The administrator is created separately from `KEYCLOAK_ADMIN` and `KEYCLOAK_ADMIN_PASSWORD`; no administrator or human search user is included in the import.
 
-1. Open [http://localhost:8081](http://localhost:8081) and sign in to the administration console with your administrator credentials.
-2. Select the **bookstore** realm. Under **Users**, create a user and set its password in **Credentials**.
-3. On the user's **Role mapping** page, assign the **client role** `bookstore-api` → `books-search`. You can now use this user to authorize search in Swagger.
 
-The development issuer is `http://localhost:8081/realms/bookstore`. The API permits HTTP Keycloak metadata in Development and requires HTTPS metadata in other environments. For a different realm or address, update `Keycloak:Issuer`, `Keycloak:MetadataAddress`, and, if needed, `Keycloak:Audience` consistently; the issuer must match the token's `iss` exactly. The imported configuration is for local development, including Swagger's implicit flow.
 
-If the `bookstore` realm already exists, startup import skips it, so new edits to the JSON or the service secret do not update that realm. Manage existing settings in Keycloak or deliberately recreate the realm after backing up anything needed. Recreating it removes its users and configuration; it is not required for normal restarts.
 
 ## 4. Authorize in Swagger
 
@@ -73,11 +66,9 @@ The API uses different clients and roles for search and management:
 
 ### Manage books as a service
 
-Obtain a service access token from Keycloak. In PowerShell, replace the placeholder with the `BOOKSTORE_SERVICE_CLIENT_SECRET` value used when the realm was first imported:
 
 ```powershell
 $tokenResponse = Invoke-RestMethod -Method Post `
-  -Uri 'http://localhost:8081/realms/bookstore/protocol/openid-connect/token' `
   -ContentType 'application/x-www-form-urlencoded' `
   -Body @{ grant_type = 'client_credentials'; client_id = 'bookstore-service'; client_secret = 'YOUR_CLIENT_SECRET' }
 $token = $tokenResponse.access_token
@@ -101,8 +92,6 @@ A **401** usually means the token is missing, expired, invalid, or cannot be val
 
 ## Running the API in Docker
 
-With `.env` configured, `docker compose up -d --build` starts all three services. The API maps host HTTP port 8082 and HTTPS port 8083; Swagger is available only in the Development environment. The container uses `http://host.docker.internal:8081/realms/bookstore/.well-known/openid-configuration` for discovery and validates the issuer `http://localhost:8081/realms/bookstore`. Keycloak is configured with a dynamic backchannel so the API container can reach the signing-key URL.
 
-The Compose override mounts local HTTPS certificate directories but does not itself configure a certificate for Kestrel. Configure a trusted certificate and its Kestrel settings before using `https://localhost:8083/swagger/index.html`, The imported `bookstore-web` client already includes the port 8083 Swagger redirect URI. Ensure discovery and the advertised signing-keys URL are reachable **from the API container**; an advertised `localhost` address can refer to the container itself. SQL Server may need extra time to become ready, so inspect `docker compose logs bookstore-api sqlserver` and restart the API if needed.
 
 Stop the services with `docker compose down`. This leaves the persisted database and Keycloak data in place.
