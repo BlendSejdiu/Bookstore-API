@@ -4,10 +4,11 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       ASPNETCORE_HTTPS_PORTS: 8081
+      Keycloak__MetadataAddress: "http://host.docker.internal:8081/realms/master/.well-known/openid-configuration"
       ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=BookstoreDb;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True"
     ports:
-      - "8080"
-      - "8081"
+      - "127.0.0.1:8082:8080"
+      - "127.0.0.1:8083:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

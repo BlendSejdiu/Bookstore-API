@@ -1,5 +1,6 @@
 ﻿using Bookstore_API.DTOs;
 using Bookstore_API.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,13 @@ namespace Bookstore_API.Controllers;
 [ApiController]
 public class BooksController(IBookService bookService) : ControllerBase
 {
+    [Authorize(Policy = "SearchBooks")]
     [HttpGet]
     [ProducesResponseType(typeof(PaginationResult<BookRequestDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PaginationResult<BookRequestDTO>>> SearchBooks([FromQuery] string? title, [FromQuery] string? author, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
+    
+    
     {
         if (page < 1)
             return BadRequest(new { message = "Page must be at least 1." });
@@ -27,6 +31,7 @@ public class BooksController(IBookService bookService) : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Policy = "ManageBooks")]
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(BookRequestDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,6 +45,7 @@ public class BooksController(IBookService bookService) : ControllerBase
         return Ok(book);
     }
 
+    [Authorize(Policy = "ManageBooks")]
     [HttpPost]
     [ProducesResponseType(typeof(BookRequestDTO), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,6 +65,7 @@ public class BooksController(IBookService bookService) : ControllerBase
         return CreatedAtAction(nameof(GetBook), new { id = book.BookId }, book);
     }
 
+    [Authorize(Policy = "ManageBooks")]
     [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(BookRequestDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,6 +93,7 @@ public class BooksController(IBookService bookService) : ControllerBase
         }
     }
 
+    [Authorize(Policy = "ManageBooks")]
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
