@@ -13,12 +13,16 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.5.2
     container_name: keycloak_auth
-    command: start-dev
+    command: start-dev --import-realm
     environment:
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      BOOKSTORE_SERVICE_CLIENT_SECRET: ${BOOKSTORE_SERVICE_CLIENT_SECRET:?Set BOOKSTORE_SERVICE_CLIENT_SECRET in .env}
+      KC_HOSTNAME: http://localhost:8081
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: 'true'
     volumes:
       - ./containers/identity:/opt/keycloak/data
+      - ./keycloak/bookstore-realm.json:/opt/keycloak/data/import/bookstore-realm.json:ro
     ports:
        - "8081:8080"
     user: root #this is used for local only

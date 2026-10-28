@@ -1,0 +1,73 @@
+{
+  "realm": "bookstore",
+  "enabled": true,
+  "roles": {
+    "client": {
+      "bookstore-api": [
+        { "name": "books-search" },
+        { "name": "books-manage" }
+      ]
+    }
+  },
+  "clients": [
+    {
+      "clientId": "bookstore-api",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    },
+    {
+      "clientId": "bookstore-web",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "https://localhost:7027/swagger/oauth2-redirect.html",
+        "https://localhost:8083/swagger/oauth2-redirect.html"
+      ],
+      "webOrigins": ["https://localhost:7027", "https://localhost:8083"],
+      "fullScopeAllowed": true,
+      "protocolMappers": [
+        {
+          "name": "bookstore-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": { "included.client.audience": "bookstore-api", "access.token.claim": "true", "id.token.claim": "false" }
+        }
+      ]
+    },
+    {
+      "clientId": "bookstore-service",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${BOOKSTORE_SERVICE_CLIENT_SECRET}",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "fullScopeAllowed": true,
+      "protocolMappers": [
+        {
+          "name": "bookstore-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": { "included.client.audience": "bookstore-api", "access.token.claim": "true", "id.token.claim": "false" }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-bookstore-service",
+      "enabled": true,
+      "serviceAccountClientId": "bookstore-service",
+      "clientRoles": { "bookstore-api": ["books-manage"] }
+    }
+  ]
+}

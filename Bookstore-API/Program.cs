@@ -20,7 +20,7 @@ var issuer = keycloak["Issuer"] ?? throw new InvalidOperationException("Keycloak
 var metadataAddress = keycloak["MetadataAddress"] ?? throw new InvalidOperationException("Keycloak:MetadataAddress is required.");
 var audience = keycloak["Audience"] ?? throw new InvalidOperationException("Keycloak:Audience is required.");
 
-builder.Services.AddAuthenticationAndAuthorization(metadataAddress, issuer, audience);
+builder.Services.AddAuthenticationAndAuthorization(metadataAddress, issuer, audience, builder.Environment.IsDevelopment());
 
 builder.Services.AddDatabase(builder.Configuration);
 

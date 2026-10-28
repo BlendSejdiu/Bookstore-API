@@ -1,4 +1,4 @@
-﻿using Bookstore_API.Database.Persistence;
+using Bookstore_API.Database.Persistence;
 using Bookstore_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -69,12 +69,12 @@ public static class DependecyInjection
         return services;
     }
 
-    public static IServiceCollection AddAuthenticationAndAuthorization(this IServiceCollection services, string metadataAddress, string issuer, string audience)
+    public static IServiceCollection AddAuthenticationAndAuthorization(this IServiceCollection services, string metadataAddress, string issuer, string audience, bool isDevelopment)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
         {
             opt.MetadataAddress = metadataAddress;
-            opt.RequireHttpsMetadata = services.BuildServiceProvider().GetService<IWebHostEnvironment>()!.IsDevelopment();
+            opt.RequireHttpsMetadata = !isDevelopment;
             opt.MapInboundClaims = false;
             opt.TokenValidationParameters = new TokenValidationParameters
             {
